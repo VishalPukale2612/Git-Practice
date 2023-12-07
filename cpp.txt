@@ -1,0 +1,255 @@
+#include<iostream>
+using namespace std;
+class Servicing
+{
+    private:
+    string customername;
+    string vehiclenumber;
+    string mobilenumber;
+    float totalbill;
+    public:
+    Servicing()
+    {
+        this->customername = "";
+        this->vehiclenumber = "";
+        this->mobilenumber = "";
+        this->totalbill = 0;
+    }
+    string get_customername()
+    {
+        return this->customername;
+    }
+    void set_customername(string customername)
+    {
+        this->customername = customername;
+    }
+    string get_vehiclenumber()
+    {
+        return this->vehiclenumber;
+    }
+    void set_vehiclenumber(string vehiclenumber)
+    {
+        this->vehiclenumber = vehiclenumber;
+    }
+    string get_mobilenumber()
+    {
+        return this->mobilenumber;
+    }
+    void set_mobilenumber(string mobilenumber)
+    {
+        this->mobilenumber = mobilenumber;
+    }
+    float get_totalbill()
+    {
+        return this->totalbill;
+    }
+    void set_totalbill(float totalbill)
+    {
+        this->totalbill = totalbill;
+    }
+    virtual void accept()
+    {
+        cout << " enter customer name: ";
+        cin >> this->customername;
+        cout << " enter vehicle number: ";
+        cin >> this->vehiclenumber;
+        cout << " enter mobile number: ";
+        cin >> this->mobilenumber;
+    }
+    virtual void display()
+    {
+        cout << "Customer name: " << this->customername << endl;
+        cout << "Vehicle number: " << this->vehiclenumber << endl;
+        cout << "Mobile number: " << this->mobilenumber << endl;
+    }
+    virtual ~Servicing()
+    {
+    }
+};
+class Maintenance : public Servicing
+{
+    private:
+    string partName;
+    float partPrice;
+    float labourCharge;
+    public:
+    Maintenance()
+    {
+        this->partName = "";
+        this->partPrice = 0;
+        this->labourCharge = 0;
+    }
+    string get_partName()
+    {
+        return this->partName;
+    }
+    void set_partName(string partName)
+    {
+        this->partName = partName;
+    }
+    float get_partPrice()
+    {
+        return this->partPrice;
+    }
+    void set_partPrice(float partPrice)
+    {
+        this->partPrice = partPrice;
+    }
+    float get_labourCharge()
+    {
+        return this->labourCharge;
+    }
+    void set_laboutCharge(float labourCharge)
+    {
+        this->labourCharge = labourCharge;
+    }
+    void accept()
+    {
+        float price;
+        Servicing :: accept();
+        cout << " enter part name: ";
+        cin >> this->partName;
+        cout << " enter part price: ";
+        cin >> price;
+
+        if(price < 0)
+        throw(-1);
+
+        this->partPrice = price;
+        cout << " enter labour charge: ";
+        cin >> this->labourCharge;
+    }
+    void display()
+    {
+        cout << "                                     " << endl;
+        Servicing :: display();
+        cout << "Part name: " << this->partName << endl;
+        cout << "Part price: " << this->partPrice << endl;
+        cout << "Labourchager: " << this->labourCharge << endl;
+        this->displaybill();
+        cout << "                         " << endl;
+    }
+    void displaybill()
+    {
+        cout << "5% GST on purchased part: ";
+        cout << 0.05 * this->partPrice << endl;
+        cout << "5% GST on labourcharge: ";
+        cout << 0.05 * this->labourCharge << endl;
+        this->set_totalbill((this->partPrice + this->labourCharge) * 1.05);
+        cout << "                                     " << endl;
+        cout << "Totalbill: " << this->get_totalbill() << endl;
+    }
+};
+class OilChange : public Servicing
+{
+    private:
+    string oilName;
+    float oilPrice;
+    public:
+    OilChange()
+    {
+        this->oilName = "";
+        this->oilPrice = 0;
+    }
+    string get_oilName()
+    {
+        return this->oilName;
+    }
+    void set_oilName(string oilName)
+    {
+        this->oilName = oilName;
+    }
+    float get_oilPrice()
+    {
+        return this->oilPrice;
+    }
+    void set_oilPrice(float oilPrice)
+    {
+        this->oilPrice = oilPrice;
+    }
+    void accept()
+    {
+        float price;
+        Servicing :: accept();
+        cout << " enter oil name: ";
+        cin >> this->oilName;
+        cout << " enter oil price: ";
+        cin >> price;
+
+        if(price < 0)
+        throw(-1);
+
+        this->oilPrice = price;
+    }
+    void display()
+    {
+        cout << "                             " << endl;
+        Servicing :: display();
+        cout << "Oil name: " << this->oilName << endl;
+        cout << "Oil price: " << this->oilPrice << endl;
+        this->displaybill();
+        cout << "                               " << endl;
+    }
+     void displaybill()
+    {
+        cout << "12% GST on Oil Price: ";
+        cout << 0.12 * this->oilPrice << endl;
+        this->set_totalbill(this->oilPrice * 1.12);
+        cout << "                                           " << endl;
+        cout << "Total bill: " << this->get_totalbill() << endl;
+    }
+};
+enum MainMenu{EXIT, MAINTENANCE, oilCHANGE};
+MainMenu menu()
+{
+    int choice;
+    cout << "                              " << endl;
+    cout << " enter your choice: " << endl;
+    cout << "0. Exit" << endl;
+    cout << "1. Maintenance OR Re-paring" << endl;
+    cout << "2. Engine OR Gear oil change" << endl;
+    cout << "                                  " << endl;
+    cin >> choice;
+    return MainMenu(choice);
+}
+int main()
+{int choice;
+Servicing *s1 = NULL;
+while((choice = menu()) != 0)
+{
+switch(choice)
+{
+case MAINTENANCE:
+s1 = new Maintenance();
+break;
+case oilCHANGE:
+s1 = new OilChange();
+break;
+default:
+cout << "Invalid choice! :(" << endl;
+}
+if(s1 != NULL)
+{
+try
+{            
+s1->accept();
+s1->display();
+}
+catch(int error)
+{
+cout << "Invalid price entered!Price cannot be negative!" << endl;
+ }
+delete s1;
+s1 = NULL;
+}
+}
+return 0;
+}
+
+
+
+
+
+
+                           
+                           
